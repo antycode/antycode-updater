@@ -58,6 +58,9 @@ autoUpdater.on('download-progress', (progressTrack) => {
 autoUpdater.on('update-available', (info) => {
   win.webContents.send('update-available', info);
 });
+autoUpdater.on('error', (error) => {
+  win.webContents.send('error', error);
+});
 
 autoUpdater.on('update-downloaded', () => {
   autoUpdater.quitAndInstall(true, true);
