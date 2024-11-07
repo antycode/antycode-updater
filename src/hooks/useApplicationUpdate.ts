@@ -43,11 +43,10 @@ const useApplicationUpdate = () => {
       ipcRenderer.on('update-progress', (_, percent) => {
         setProgress(Math.round(percent));
       });
-      // ipcRenderer.on('error', (_, error) => {
-      //   setStatusMessage('Произошла ошибка при загрузке обновление');
-      //   console.log('error update', error)
-      //   setTimeout(() => navigate('/main'), 3000  )
-      // });
+      ipcRenderer.on('error', (_, error) => {
+        console.log('error update', error)
+        // setTimeout(() => navigate('/main'), 3000  )
+      });
     return () => {
       ipcRenderer.removeAllListeners('checking-for-update');
       ipcRenderer.removeAllListeners('update-available');
