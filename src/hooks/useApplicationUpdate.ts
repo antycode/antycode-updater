@@ -19,9 +19,17 @@ const useApplicationUpdate = () => {
       });
   
       ipcRenderer.on('update-available', (_, info) => {
-        setStatusMessage(`Загрузка обновления: версия ${info.version}`);
-        setUpdateAvailable(true);
-        navigate('/');
+        const platform = process.platform; // "darwin" для Mac, "win32" для Windows
+        const updateVersion = info.version;
+  
+        if ((platform === 'darwin' && info.files.some((file:any) => file.url.includes('mac'))) ||
+            (platform === 'win32' && info.files.some((file:any) => file.url.includes('exe') || file.url.includes('win')))) {
+          setStatusMessage(`Загрузка обновления: версия ${updateVersion}`);
+          setUpdateAvailable(true);
+        } else {
+          setStatusMessage(`Обновление версии ${updateVersion} недоступно для вашей системы`);
+          setTimeout(() => navigate('/main'), 2000);
+        }
       });
   
       ipcRenderer.on('update-not-available', () => {

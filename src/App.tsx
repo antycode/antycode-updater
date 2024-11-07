@@ -5,7 +5,6 @@ import useApplicationUpdate from './hooks/useApplicationUpdate';
 
 function App() {
   const { progress, updateAvailable, statusMessage } = useApplicationUpdate();
-
   return (
       <Routes>
         <Route path="/" element={<LoadingPage progress={progress} updateAvailable={updateAvailable} statusMessage={statusMessage} />} />
