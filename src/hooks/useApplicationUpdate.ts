@@ -19,11 +19,15 @@ const useApplicationUpdate = () => {
       });
   
       ipcRenderer.on('update-available', (_, info) => {
-        const platform = process.platform; // "darwin" для Mac, "win32" для Windows
+        const platform = process.platform;
         const updateVersion = info.version;
+        console.log('info', info);
   
-        if ((platform === 'darwin' && info.files.some((file:any) => file.url.includes('mac'))) ||
-            (platform === 'win32' && info.files.some((file:any) => file.url.includes('exe') || file.url.includes('win')))) {
+        // Проверка доступности обновления для текущей системы
+        const isFormatAvailable = (platform === 'darwin' && info.files.some((file:any) => file.url.includes('mac')))
+          || (platform === 'win32' && info.files.some((file:any) => file.url.includes('exe') || file.url.includes('win')));
+        console.log(info)
+        if (isFormatAvailable) {
           setStatusMessage(`Загрузка обновления: версия ${updateVersion}`);
           setUpdateAvailable(true);
         } else {
@@ -39,11 +43,11 @@ const useApplicationUpdate = () => {
       ipcRenderer.on('update-progress', (_, percent) => {
         setProgress(Math.round(percent));
       });
-      ipcRenderer.on('error', (_, error) => {
-        setStatusMessage('Произошла ошибка при загрузке обновление');
-        console.log('error update', error)
-        setTimeout(() => navigate('/main'), 3000  )
-      });
+      // ipcRenderer.on('error', (_, error) => {
+      //   setStatusMessage('Произошла ошибка при загрузке обновление');
+      //   console.log('error update', error)
+      //   setTimeout(() => navigate('/main'), 3000  )
+      // });
     return () => {
       ipcRenderer.removeAllListeners('checking-for-update');
       ipcRenderer.removeAllListeners('update-available');
