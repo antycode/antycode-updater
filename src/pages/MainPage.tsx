@@ -15,7 +15,7 @@ const MainPage = () => {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>Vite + React V7.0.8</h1>
+      <h1>Vite + React V7.0.10</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}

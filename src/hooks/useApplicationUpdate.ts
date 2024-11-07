@@ -44,8 +44,15 @@ const useApplicationUpdate = () => {
         setProgress(Math.round(percent));
       });
       ipcRenderer.on('error', (_, error) => {
-        console.log('error update', error)
-        // setTimeout(() => navigate('/main'), 3000  )
+        console.log('error update', error);
+        
+        // Проверяем текст ошибки, чтобы понять, какой файл не найден
+        if (error.message.includes("Cannot find latest.yml") || error.message.includes("Cannot find latest-mac.yml")) {
+          setStatusMessage("Файл обновления недоступен для вашей системы.");
+        } else {
+          setStatusMessage("Произошла ошибка при загрузке обновления.");
+        }
+        setTimeout(() => navigate('/main'), 3000);
       });
     return () => {
       ipcRenderer.removeAllListeners('checking-for-update');
