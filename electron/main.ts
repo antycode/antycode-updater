@@ -38,33 +38,36 @@ function createWindow() {
     win.loadURL(VITE_DEV_SERVER_URL);
   } else {
     // win.loadFile('dist/index.html')
+    startUpdate()
     win.loadFile(path.join(RENDERER_DIST, 'index.html'));
   }
   
 }
 
+function startUpdate () {
+  autoUpdater.on('checking-for-update', () => {
+    win.webContents.send('checking-for-update');
+  });
+  autoUpdater.on('update-not-available', () => {
+    win.webContents.send('update-not-available');
+  });
+  autoUpdater.on('download-progress', (progressTrack) => {
+    win.webContents.send('update-progress', progressTrack.percent);
+  });
+  
+  autoUpdater.on('update-available', (info) => {
+    win.webContents.send('update-available', info);
+  });
+  autoUpdater.on('error', (error) => {
+    win.webContents.send('error', error);
+  });
+  
+  autoUpdater.on('update-downloaded', () => {
+    autoUpdater.quitAndInstall(true, true);
+  })
+}
 
-// Отправка прогресса загрузки обновления в рендерер
-autoUpdater.on('checking-for-update', () => {
-  win.webContents.send('checking-for-update');
-});
-autoUpdater.on('update-not-available', () => {
-  win.webContents.send('update-not-available');
-});
-autoUpdater.on('download-progress', (progressTrack) => {
-  win.webContents.send('update-progress', progressTrack.percent);
-});
 
-autoUpdater.on('update-available', (info) => {
-  win.webContents.send('update-available', info);
-});
-autoUpdater.on('error', (error) => {
-  win.webContents.send('error', error);
-});
-
-autoUpdater.on('update-downloaded', () => {
-  autoUpdater.quitAndInstall(true, true);
-})
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

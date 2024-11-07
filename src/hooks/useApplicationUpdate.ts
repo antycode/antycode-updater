@@ -9,29 +9,33 @@ const useApplicationUpdate = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    ipcRenderer.on('checking-for-update', () => {
-      setStatusMessage('Проверка обновлений...');
-    });
+    if (process.env['VITE_DEV_SERVER_URL']) {
+      setTimeout(() => navigate('/main'), 2000);
+      return;
+    }
 
-    ipcRenderer.on('update-available', (_, info) => {
-      setStatusMessage(`Загрузка обновления: версия ${info.version}`);
-      setUpdateAvailable(true);
-      navigate('/');
-    });
-
-    ipcRenderer.on('update-not-available', () => {
-      navigate('/main'); 
-    });
-
-    ipcRenderer.on('update-progress', (_, percent) => {
-      setProgress(Math.round(percent));
-    });
-    ipcRenderer.on('error', (_, error) => {
-      setStatusMessage('Произошла ошибка при загрузке обновление');
-      console.log('error update', error)
-      setTimeout(() => navigate('/main'), 3000  )
-    });
-
+      ipcRenderer.on('checking-for-update', () => {
+        setStatusMessage('Проверка обновлений...');
+      });
+  
+      ipcRenderer.on('update-available', (_, info) => {
+        setStatusMessage(`Загрузка обновления: версия ${info.version}`);
+        setUpdateAvailable(true);
+        navigate('/');
+      });
+  
+      ipcRenderer.on('update-not-available', () => {
+        navigate('/main'); 
+      });
+  
+      ipcRenderer.on('update-progress', (_, percent) => {
+        setProgress(Math.round(percent));
+      });
+      ipcRenderer.on('error', (_, error) => {
+        setStatusMessage('Произошла ошибка при загрузке обновление');
+        console.log('error update', error)
+        setTimeout(() => navigate('/main'), 3000  )
+      });
     return () => {
       ipcRenderer.removeAllListeners('checking-for-update');
       ipcRenderer.removeAllListeners('update-available');
